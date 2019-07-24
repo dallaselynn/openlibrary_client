@@ -31,12 +31,23 @@ defmodule OpenlibraryClient.Api do
   # generic methods that work with multiple kinds of objects
   # object is the openlibrary object key not the olid, eg. '/books/OL1M'
   def history(object_key, params) do
-    get!("#{object_key}.json?m=history", params: params)
+    get("#{object_key}.json?m=history", params: params)
   end
 
   # query through the Query API.
-  def query(query, params) do
-    get!("/query.json?#{query}", params: params)
+  def query(query, options \\ []) do
+    get("/query.json?#{query}", options: options)
+  end
+
+  # query by bibkey
+  def get_by_bibkey(bibkey, value, details \\ false)
+  def get_by_bibkey(bibkey, value, false) do
+    get("/api/books.json?bibkeys=#{bibkey}:#{value}")
+  end
+
+  def get_by_bibkey(bibkey, value, true) do
+    bibkeys = "#{bibkey}:#{value}"
+    get("/api/books?bibkeys=#{bibkeys}&format=json&jscmd=data")
   end
 
   # TODO: update
